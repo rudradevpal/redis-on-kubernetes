@@ -1,6 +1,6 @@
 MASTERS=3
 NAMESPACE="redis-cluster"
-NODES=$(($MASTERS * 2))
+NODES=$(($MASTERS*2))
 
 kubectl create namespace $NAMESPACE
 kubectl apply -f redis-cluster.yml -n $NAMESPACE
