@@ -30,4 +30,4 @@ do
   fi
 done
 
-kubectl exec -it redis-cluster-0 -n $NAMESPACE -- echo "Yes" | redis-cli --cluster create --cluster-replicas 1  $(kubectl get pods -l app=redis-cluster -o jsonpath='{range.items[*]} {.status.podIP}:6379' -n $NAMESPACE)
+kubectl exec -it redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster create --cluster-replicas 1  $(kubectl get pods -l app=redis-cluster -o jsonpath='{range.items[*]} {.status.podIP}:6379' -n $NAMESPACE) <<< "yes"
