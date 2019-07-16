@@ -13,8 +13,9 @@ echo "> Looking for existing Master node"
 master_id=0
 while [ $master_id -lt $OLD_NODES ]
 do
-  type=$(kubectl exec redis-cluster-$master_id -n $NAMESPACE -- redis-cli INFO|grep "role")
-  if [ $type == *role:master* ]
+  type=$(kubectl exec redis-cluster-$master_id -n $NAMESPACE -- redis-cli INFO|grep 'role:master'|wc -l)
+  echo $type
+  if [ $type -gt 0 ]
   then
     echo "Found master redis-cluster-"$master_id
     break
