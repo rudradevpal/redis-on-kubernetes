@@ -28,8 +28,8 @@ done
 for i in $(seq $OLD_NODES $(($NODES-1)));
 do
   echo "> Joining node redis-cluster-"$i" to the cluster";
-  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node $(kubectl get pod redis-cluster-$i -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -o jsonpath='{.status.podIP}'):6379
+  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node $(kubectl get pod redis-cluster-$i -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
 done
 
 echo "> Rebalancing the masters"
-kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster rebalance --cluster-use-empty-masters $(kubectl get pod redis-cluster-0 -o jsonpath='{.status.podIP}'):6379
+kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster rebalance --cluster-use-empty-masters $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
