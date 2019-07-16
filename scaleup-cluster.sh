@@ -30,10 +30,10 @@ counter=$OLD_NODES
 while [ $counter -lt $NODES ]
 do
   echo "> Adding node redis-cluster-"$counter" as Master to the cluster";
-  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node $(kubectl get pod redis-cluster-$i -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
+  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node $(kubectl get pod redis-cluster-$counter -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
   counter=$(($counter+1))
   echo "> Adding node redis-cluster-"$counter" as Slave to the cluster";
-  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node --cluster-slave $(kubectl get pod redis-cluster-$i -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
+  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node --cluster-slave $(kubectl get pod redis-cluster-$counter -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
   counter=$(($counter+1))
 done
 
