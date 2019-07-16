@@ -25,10 +25,15 @@ do
   fi
 done
 
-for i in $(seq $OLD_NODES $(($NODES-1)));
+counter=$OLD_NODES
+while [ $counter -lt $NODES ]
 do
-  echo "> Joining node redis-cluster-"$i" to the cluster";
+  echo "> Adding node redis-cluster-"$counter" as Master to the cluster";
   kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node $(kubectl get pod redis-cluster-$i -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
+  counter=$(($counter+1))
+  echo "> Adding node redis-cluster-"$counter" as Slave to the cluster";
+  kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node --cluster-slave $(kubectl get pod redis-cluster-$i -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
+  counter=$(($counter+1))
 done
 
 echo "> Rebalancing the masters"
