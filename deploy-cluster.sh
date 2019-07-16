@@ -9,6 +9,7 @@ kubectl create namespace $NAMESPACE
 echo "Creating ConfigMap, Service & StatefulSet"
 kubectl apply -f redis-cluster.yml -n $NAMESPACE
 
+echo "Checking service state"
 while true
 do
   rows=$(kubectl get pods -n $NAMESPACE|awk '{if(NR>1)print}'|grep 'redis-cluster'|awk '{ print $2}'|grep '1/1'|wc -l)
