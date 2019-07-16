@@ -15,6 +15,7 @@ do
   rows=$(kubectl get pods -n $NAMESPACE|awk '{if(NR>1)print}'|grep 'redis-cluster'|awk '{ print $2}'|grep '1/1'|wc -l)
   if [ $rows == 1 ]
   then
+    echo "Service is ready"
     break
   else
     sleep 1
@@ -30,6 +31,7 @@ do
   rows=$(kubectl get pods -n $NAMESPACE| awk '{if(NR>1)print}'|grep 'redis-cluster'|awk '{ print $2}'|grep '1/1'|wc -l)
   if [ $rows == $NODES ]
   then
+    echo "All replicas are ready"
     break
   else
     sleep 1

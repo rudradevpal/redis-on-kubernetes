@@ -19,6 +19,7 @@ do
   rows=$(kubectl get pods -n $NAMESPACE| awk '{if(NR>1)print}'|grep 'redis-cluster'|awk '{ print $2}'|grep '1/1'|wc -l)
   if [ $rows == $NODES ]
   then
+    echo "All nodes are ready"
     break
   else
     sleep 1
@@ -35,6 +36,8 @@ do
   kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster add-node --cluster-slave $(kubectl get pod redis-cluster-$i -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379 $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
   counter=$(($counter+1))
 done
+
+sleep 10
 
 echo "> Rebalancing the masters"
 kubectl exec redis-cluster-0 -n $NAMESPACE -- redis-cli --cluster rebalance --cluster-use-empty-masters $(kubectl get pod redis-cluster-0 -n $NAMESPACE -o jsonpath='{.status.podIP}'):6379
