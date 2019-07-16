@@ -14,7 +14,7 @@ master_id=0
 while [ $master_id -lt $OLD_NODES ]
 do
   type=$(kubectl exec redis-cluster-$master_id -n $NAMESPACE -- redis-cli INFO|grep "role")
-  if [ $type == "role:master" ]
+  if [ $type == *role:master* ]
   then
     echo "Found master redis-cluster-"$master_id
     break
@@ -23,7 +23,7 @@ do
   fi
 done
 
-if [ $master_id -gt $OLD_NODES ]
+if [ $master_id -gt $(($OLD_NODES-1)) ]
 then
   echo "Master not found."
   echo "Exiting..."
